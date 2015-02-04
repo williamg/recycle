@@ -72,7 +72,8 @@ As expected, this is permanent and cannot be undone.
 ## Contributing
 
 Feel free to contribute. All I ask is that you adhere to the existing style,
-namely, tabs over spaces, and double quotes over single quotes.
+namely, tabs over spaces, and double quotes over single quotes. All pull requests should
+be based on the 'dev' branch.
 
 ===
 
