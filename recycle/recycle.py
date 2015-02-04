@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, argparse, logging, os, subprocess
+import sys, argparse, logging, os, subprocess, shutil
 
 # Box syncing
 SAVE_DIR = os.path.expanduser("~") + "/.recycle/"
@@ -9,14 +9,9 @@ try:
 except NameError:
 	pass
 
-def call_command(command):
-	logging.debug("Executing " + command)
-	comm = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-	return comm.communicate()
-
 def init():
 	if not os.path.isdir(SAVE_DIR):
-		call_command("mkdir " + SAVE_DIR)
+		os.makedirs(SAVE_DIR)
 
 	logging.basicConfig(level = logging.DEBUG,
 		format = "%(asctime)s %(levelname)-8s %(message)s",
@@ -31,7 +26,6 @@ def init():
 	console.setFormatter(formatter)
 
 	logging.getLogger("").addHandler(console)
-
 	logging.debug("Using Python version " + sys.version)
 
 def handleNew(name, files):
@@ -52,19 +46,21 @@ def handleNew(name, files):
 			return
 		else:
 			logging.debug("Overwrite approved. Deleting " + save_path)
-			call_command("rm -rf " + save_path)
+			handleDelete(name)
 
 	assert not os.path.isdir(save_path)
-	call_command("mkdir -p " + save_path)
 
 	files = os.path.abspath(files)
 	logging.debug("Creating new template '" + name + "' from " + files)
 
 	if os.path.isdir(files):
-		files += "/*"
-
-	command = "cp -r " + files + " " + save_path
-	call_command(command)
+		shutil.copytree(files, save_path)
+	elif os.path.isfile(files):
+		os.makedirs(save_path)
+		shutil.copy(files, save_path)
+	else:
+		logging.error("Source '" + files + "' not found!")
+		return
 
 	assert os.path.isdir(save_path)
 	logging.debug("Boilerplate created!")
@@ -74,8 +70,18 @@ def handleUse(name):
 
 	if os.path.isdir(save_path):
 		logging.debug("Using template '" + name + "'")
-		command = "cp -r " + save_path + "/*" + " ."
-		call_command(command)
+
+		contents = os.listdir(save_path)
+		for obj in contents:
+			path = os.path.join(save_path, obj)
+
+			if os.path.isdir(path):
+				dest = os.path.join(os.getcwd(), obj)
+				shutil.copytree(path, dest)
+			elif os.path.isfile(path):
+				shutil.copy(path, os.getcwd())
+			else:
+				logging.debug("Skipping template content '" + path + "'")
 	else:
 		logging.error("No template with the name '" + name + "'  was found!")
 
@@ -98,9 +104,7 @@ def handleDelete(name):
 	save_path = SAVE_DIR + name
 
 	if os.path.isdir(save_path):
-		logging.debug("Deleting template '" + name + "'")
-		command = "rm -r " + save_path
-		call_command(command)
+		shutil.rmtree(save_path)
 	else:
 		logging.error("No template with the name '" + name + "'  was found!")
 
@@ -156,3 +160,5 @@ def main():
 	else:
 		logging.error("Invalid mode")
 
+if __name__ == "__main__":
+	main()
