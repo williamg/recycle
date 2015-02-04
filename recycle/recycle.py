@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import sys, argparse, logging, os, subprocess, shutil
 
-# Box syncing
+# Location of saved templates
 SAVE_DIR = os.path.expanduser("~") + "/.recycle/"
 
 try:
