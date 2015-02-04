@@ -1,6 +1,5 @@
 # Recycle
 
-===
 Recycle is a glorfied copy-paste utility for managing commonly-used templates
 and boilerplate. After creating a template once, you can save it with recycle
 for use in the future. Recycle can manage templates for single files or
@@ -21,16 +20,16 @@ Or by cloning the repo and running
 
 To save some files for later use, simply run
 
-    re new NAME_OF_BOILERPLATE LOCATION/OF/FILES
+    re new NAME_OF_TEMPLATE LOCATION/OF/FILES
 
 So for example
 
-   re new MathHomework ~/homework.tex
+    re new MathHomework ~/homework.tex
 
 Would save the file `homework.tex` under the name "MathHomework"
 Similarly,
 
-   re new WebApp ~/WebAppTemplate/
+    re new WebApp ~/WebAppTemplate/
 
 Would save all the files and folders within `~/WebAppTemplate` under the name
 "WebApp"
@@ -43,7 +42,7 @@ This will completely replace the existing saved files.
 
 To use an existing template, run
 
-    re use NAME_OF_BOILERPLATE
+    re use NAME_OF_TEMPLATE
 
 This will copy all of the files associated with that name to the current directory.
 For example, to create a new web app one might use
