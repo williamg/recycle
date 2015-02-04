@@ -34,7 +34,7 @@ Similarly,
 Would save all the files and folders within `~/WebAppTemplate` under the name
 "WebApp"
 
-*NOTE*: If you try to same something using a name that has already been
+**NOTE**: If you try to same something using a name that has already been
 assigned, you will be prompted to overwrite the existing files.
 This will completely replace the existing saved files.
 
