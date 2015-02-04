@@ -97,14 +97,9 @@ def handle_list():
     assert os.path.isdir(SAVE_DIR)
 
     names = next(os.walk(SAVE_DIR))[1]
-    idx = 0
-
     for line in names:
-        idx += 1
-
         if line.startswith(SAVE_DIR):
             line = line[len(SAVE_DIR):-1]
-
         print(line)
 
 
