@@ -7,8 +7,7 @@ import sys
 import glob
 
 # Location of saved templates
-SAVE_DIR = os.environ.get("RECYCLE_TEMPLATES_DIR",
-    os.path.join(os.path.expanduser("~"), ".recycle"))
+SAVE_DIR = os.environ.get("RECYCLE_TEMPLATES_DIR", "~/.recycle")
 
 try:
     input = raw_input
@@ -65,9 +64,12 @@ def get_name(path):
     return os.path.basename(os.path.normpath(path))
 
 def get_save_path(templateName):
+    global SAVE_DIR
     return os.path.join(SAVE_DIR, templateName)
 
 def setup_logging():
+    global SAVE_DIR
+
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)-8s %(message)s",
                         datefmt="%m-%d %H:%M",
@@ -83,6 +85,13 @@ def setup_logging():
     logging.getLogger("").addHandler(console)
 
 def init():
+    global SAVE_DIR
+
+    SAVE_DIR = os.path.expanduser(SAVE_DIR)
+    SAVE_DIR = os.path.expandvars(SAVE_DIR)
+    SAVE_DIR = os.path.abspath(SAVE_DIR)
+    print SAVE_DIR
+
     if not os.path.isdir(SAVE_DIR):
         os.makedirs(SAVE_DIR)
 
@@ -135,6 +144,7 @@ def handle_use(name):
 
 
 def handle_list():
+    global SAVE_DIR
     assert os.path.isdir(SAVE_DIR)
 
     names = next(os.walk(SAVE_DIR))[1]
@@ -156,6 +166,8 @@ def handle_delete(name):
 
 
 def handle_location():
+    global SAVE_DIR
+
     print(os.path.normpath(SAVE_DIR) + os.sep)
 
 
