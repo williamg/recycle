@@ -4,6 +4,7 @@ import logging
 import os
 import shutil
 import sys
+import glob
 
 # Location of saved templates
 SAVE_DIR = os.path.expanduser("~") + "/.recycle/"
@@ -13,6 +14,22 @@ try:
 except NameError:
     pass
 
+
+def copy(contents, dest):
+    if not os.path.isdir(dest):
+        os.makedirs(dest)
+
+    for obj in contents:
+        if os.path.isdir(obj):
+            folderName = os.path.basename(os.path.normpath(obj))
+            shutil.copytree(obj, os.path.join(dest, folderName))
+        elif os.path.isfile(obj):
+            shutil.copy(obj, dest)
+        else:
+            raise IOError("Source doest not exist!")
+
+def getSavePath(templateName):
+    return os.path.join(SAVE_DIR, templateName)
 
 def init():
     if not os.path.isdir(SAVE_DIR):
@@ -35,7 +52,12 @@ def init():
 
 
 def handle_new(name, files):
-    save_path = SAVE_DIR + name
+    save_path = getSavePath(name)
+
+    fileList = [os.path.abspath(f) for f in glob.glob(files)]
+    if len(fileList) is 0:
+        logging.error("No files found matching '" + files + "'")
+        return
 
     if os.path.isdir(save_path):
         # Boilerplate with that name already exists
@@ -56,39 +78,30 @@ def handle_new(name, files):
 
     assert not os.path.isdir(save_path)
 
-    files = os.path.abspath(files)
     logging.debug("Creating new template '" + name + "' from " + files)
 
-    if os.path.isdir(files):
-        shutil.copytree(files, save_path)
-    elif os.path.isfile(files):
-        os.makedirs(save_path)
-        shutil.copy(files, save_path)
-    else:
-        logging.error("Source '" + files + "' not found!")
-        return
+    try:
+        copy(fileList, save_path)
+    except IOError as e:
+        logging.error(e.strerror)
 
     assert os.path.isdir(save_path)
     logging.debug("Boilerplate created!")
 
 
 def handle_use(name):
-    save_path = SAVE_DIR + name
+    save_path = getSavePath(name)
 
     if os.path.isdir(save_path):
         logging.debug("Using template '" + name + "'")
 
         contents = os.listdir(save_path)
-        for obj in contents:
-            path = os.path.join(save_path, obj)
+        contentPaths = [os.path.join(save_path, c) for c in contents]
 
-            if os.path.isdir(path):
-                dest = os.path.join(os.getcwd(), obj)
-                shutil.copytree(path, dest)
-            elif os.path.isfile(path):
-                shutil.copy(path, os.getcwd())
-            else:
-                logging.debug("Skipping template content '" + path + "'")
+        try:
+            copy(contentPaths, os.getcwd())
+        except IOError as e:
+            logging.error("Apparently your current directory doesn't exist...")
     else:
         logging.error("No template with the name '" + name + "'  was found!")
 
@@ -104,7 +117,7 @@ def handle_list():
 
 
 def handle_delete(name):
-    save_path = SAVE_DIR + name
+    save_path = getSavePath(name)
 
     if os.path.isdir(save_path):
         shutil.rmtree(save_path)
