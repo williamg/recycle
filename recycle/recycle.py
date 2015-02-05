@@ -155,6 +155,10 @@ def handle_delete(name):
     assert not os.path.isdir(save_path)
 
 
+def handle_location():
+    print(os.path.normpath(SAVE_DIR) + os.sep)
+
+
 def parseargs():
     parser = argparse.ArgumentParser()
 
@@ -184,6 +188,10 @@ def parseargs():
         "name", type=str, help="The name of the template to delete")
     delete_parser.set_defaults(mode="delete")
 
+    location_parser = subparsers.add_parser(
+        "location", help="Print the current location of the templates directory")
+    location_parser.set_defaults(mode="location")
+
     return parser.parse_args()
 
 
@@ -203,6 +211,8 @@ def main():
         handle_list()
     elif args.mode is "delete":
         handle_delete(args.name)
+    elif args.mode is "location":
+        handle_location()
     else:
         logging.error("Invalid mode")
 
