@@ -7,7 +7,8 @@ import sys
 import glob
 
 # Location of saved templates
-SAVE_DIR = os.path.join(os.path.expanduser("~"), ".recycle")
+SAVE_DIR = os.environ.get("RECYCLE_TEMPLATES_DIR",
+    os.path.join(os.path.expanduser("~"), ".recycle"))
 
 try:
     input = raw_input
