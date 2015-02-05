@@ -31,16 +31,16 @@
         <hr>
 
         <section id="main_content">
-          <h2>
-<a id="stop-repeating-yourself" class="anchor" href="#stop-repeating-yourself" aria-hidden="true"><span class="octicon octicon-link"></span></a>Stop Repeating Yourself</h2>
+          <h1>
+<a id="recycle" class="anchor" href="#recycle" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recycle</h1>
 
 <p>Recycle is a glorified copy-paste utility for managing commonly-used templates
-and boilerplate. After creating a template once, you can save it with Recycle
+and boilerplate. After creating a template once, you can save it with recycle
 for use in the future. Recycle can manage templates for single files or
 even entire directory structures.</p>
 
-<h3>
-<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h3>
+<h2>
+<a id="installation" class="anchor" href="#installation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Installation</h2>
 
 <p>Recycle can be installed with pip:</p>
 
@@ -52,11 +52,11 @@ even entire directory structures.</p>
 <pre><code>python setup.py install
 </code></pre>
 
-<h3>
-<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+<h2>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h2>
 
-<h4>
-<a id="recycling-101" class="anchor" href="#recycling-101" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recycling 101</h4>
+<h3>
+<a id="recycling-101" class="anchor" href="#recycling-101" aria-hidden="true"><span class="octicon octicon-link"></span></a>Recycling 101</h3>
 
 <p>To save some files for later use, simply run</p>
 
@@ -74,15 +74,14 @@ Similarly,</p>
 <pre><code>re new WebApp ~/WebAppTemplate/
 </code></pre>
 
-<p>Would save all the files and folders within <code>~/WebAppTemplate</code> under the name
-"WebApp"</p>
+<p>Would save the directory <code>~/WebAppTemplate</code> under the name "WebApp" Recycle also supports globbing which is cool.</p>
 
-<p><strong>NOTE</strong>: If you try to name something using a name that has already been
+<p><strong>NOTE</strong>: If you try to same something using a name that has already been
 assigned, you will be prompted to overwrite the existing files.
 This will completely replace the existing saved files.</p>
 
-<h4>
-<a id="reusing" class="anchor" href="#reusing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reusing</h4>
+<h3>
+<a id="reusing" class="anchor" href="#reusing" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reusing</h3>
 
 <p>To use an existing template, run</p>
 
@@ -92,15 +91,15 @@ This will completely replace the existing saved files.</p>
 <p>This will copy all of the files associated with that name to the current directory.
 For example, to create a new web app one might use</p>
 
-<pre><code>mkdir SuperRadWebApp
-cd SuperRadWebApp
-re use WebApp
+<pre><code>re use WebApp
 </code></pre>
 
-<p>Boom! All your files are magically there. You can get started on the fun stuff.</p>
+<p>Boom! All your files are magically there. You can get started on the fun stuff. If your template happens to include
+a file or directory that already exists in the directory you're trying to use it in, Recycle will ask if you want to
+skip that file or directory or overwrite the one that exists.</p>
 
-<h4>
-<a id="listing-saved-files" class="anchor" href="#listing-saved-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Listing Saved Files</h4>
+<h3>
+<a id="listing-saved-files" class="anchor" href="#listing-saved-files" aria-hidden="true"><span class="octicon octicon-link"></span></a>Listing Saved Files</h3>
 
 <p>You can list all the templates you have with</p>
 
@@ -109,8 +108,8 @@ re use WebApp
 
 <p>No explanation needed, hopefully</p>
 
-<h4>
-<a id="deleting-templates" class="anchor" href="#deleting-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deleting Templates</h4>
+<h3>
+<a id="deleting-templates" class="anchor" href="#deleting-templates" aria-hidden="true"><span class="octicon octicon-link"></span></a>Deleting Templates</h3>
 
 <p>You can delete a template with</p>
 
@@ -118,6 +117,16 @@ re use WebApp
 </code></pre>
 
 <p>As expected, this is permanent and cannot be undone.</p>
+
+<h3>
+<a id="changing-recycle-directory" class="anchor" href="#changing-recycle-directory" aria-hidden="true"><span class="octicon octicon-link"></span></a>Changing Recycle Directory</h3>
+
+<p>You can change where recycle stores your templates by setting the <code>RECYCLE_TEMPLATE_DIR</code>
+environmental variable. The default is <code>~/.recycle/</code>. You can view the currently used directory
+with</p>
+
+<pre><code>re location
+</code></pre>
         </section>
 
         <footer>
