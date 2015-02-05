@@ -90,7 +90,6 @@ def init():
     SAVE_DIR = os.path.expanduser(SAVE_DIR)
     SAVE_DIR = os.path.expandvars(SAVE_DIR)
     SAVE_DIR = os.path.abspath(SAVE_DIR)
-    print SAVE_DIR
 
     if not os.path.isdir(SAVE_DIR):
         os.makedirs(SAVE_DIR)
