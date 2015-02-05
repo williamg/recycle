@@ -100,7 +100,12 @@ def init():
 def handle_new(name, files):
     save_path = get_save_path(name)
 
-    fileList = [os.path.abspath(f) for f in glob.glob(files)]
+    fileList = []
+    for filename in files:
+        fileList += [os.path.abspath(f) for f in glob.glob(filename)]
+
+    # Remove duplicates
+    fileList = list(set(fileList))
 
     if len(fileList) is 0:
         logging.error("No files found matching '{}'".format(files))
@@ -180,7 +185,8 @@ def parseargs():
     new_parser.add_argument(
         "name", type=str, help="The name under which to save this template")
     new_parser.add_argument(
-        "files", type=str, help="The file or directory to save as the template")
+        "files", type=str, nargs="+",
+        help="The file or directory to save as the template")
     new_parser.set_defaults(mode="new")
 
     use_parser = subparsers.add_parser(
