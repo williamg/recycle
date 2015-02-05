@@ -7,7 +7,7 @@ import sys
 import glob
 
 # Location of saved templates
-SAVE_DIR = os.path.expanduser("~") + "/.recycle/"
+SAVE_DIR = os.path.join(os.path.expanduser("~"), ".recycle")
 
 try:
     input = raw_input
@@ -18,16 +18,17 @@ def should_overwrite(typeOfThing, path):
     assert os.path.exists(path)
     nameOfThing = get_name(path)
 
-    logging.debug(path + " already exists. Asking to overwrite...")
+    logging.debug("{} already exists. Asking to overwrite...".format(path))
 
     res = ""
     while res != "y" and res != "n":
-        res = input(typeOfThing + "'" + nameOfThing + "' already exists. "
-                    "Do you want to replace it? (y/n) ")
+        prompt = "{0} {1} already exists. Do you want to replace it? " \
+                 "(y/n) ".format(typeOfThing, nameOfThing)
+        res = input(prompt)
         res = res.lower()
 
     if res == "y":
-        logging.debug("Overwrite approved. Deleting " + path)
+        logging.debug("Overwrite approved. Deleting {}".format(path))
         return True
     else:
         logging.debug("Overwrite denied.")
@@ -42,7 +43,7 @@ def copy(contents, dest):
         destName = os.path.join(dest, name)
 
         if os.path.exists(destName):
-            if should_overwrite("", destName):
+            if should_overwrite("File or directory", destName):
                 if os.path.isdir(destName):
                     shutil.rmtree(destName)
                 else:
@@ -69,7 +70,7 @@ def setup_logging():
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)-8s %(message)s",
                         datefmt="%m-%d %H:%M",
-                        filename=SAVE_DIR + "recycle.log",
+                        filename=os.path.join(SAVE_DIR, "recycle.log"),
                         filemode="w")
     console = logging.StreamHandler()
 
@@ -85,7 +86,7 @@ def init():
         os.makedirs(SAVE_DIR)
 
     setup_logging()
-    logging.debug("Using Python version " + sys.version)
+    logging.debug("Using Python version {}".format(sys.version))
 
 def handle_new(name, files):
     save_path = get_save_path(name)
@@ -93,7 +94,7 @@ def handle_new(name, files):
     fileList = [os.path.abspath(f) for f in glob.glob(files)]
 
     if len(fileList) is 0:
-        logging.error("No files found matching '" + files + "'")
+        logging.error("No files found matching '{}'".format(files))
         return
 
     if os.path.isdir(save_path):
@@ -104,7 +105,7 @@ def handle_new(name, files):
             return
 
     assert not os.path.isdir(save_path)
-    logging.debug("Creating new template '" + name + "' from " + files)
+    logging.debug("Creating new template '{}' from {}".format(name, files))
 
     try:
         copy(fileList, save_path)
@@ -119,7 +120,7 @@ def handle_use(name):
     save_path = get_save_path(name)
 
     if os.path.isdir(save_path):
-        logging.debug("Using template '" + name + "'")
+        logging.debug("Using template '{}'".format(name))
 
         contents = os.listdir(save_path)
         contentPaths = [os.path.join(save_path, c) for c in contents]
@@ -129,7 +130,7 @@ def handle_use(name):
         except IOError as e:
             logging.error("Your recycle directory doesn't seem to exist...")
     else:
-        logging.error("No template with the name '" + name + "'  was found!")
+        logging.error("No template with the name '{}' was found!".format(name))
 
 
 def handle_list():
@@ -148,7 +149,7 @@ def handle_delete(name):
     if os.path.isdir(save_path):
         shutil.rmtree(save_path)
     else:
-        logging.error("No template with the name '" + name + "'  was found!")
+        logging.error("No template with the name '{}'  was found!".format(name))
 
     assert not os.path.isdir(save_path)
 
