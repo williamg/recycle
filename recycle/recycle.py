@@ -14,27 +14,58 @@ try:
 except NameError:
     pass
 
+def should_overwrite(typeOfThing, path):
+    assert os.path.exists(path)
+    nameOfThing = get_name(path)
+
+    logging.debug(path + " already exists. Asking to overwrite...")
+
+    res = ""
+    while res != "y" and res != "n":
+        res = input(typeOfThing + "'" + nameOfThing + "' already exists. "
+                    "Do you want to replace it? (y/n) ")
+        res = res.lower()
+
+    if res == "y":
+        logging.debug("Overwrite approved. Deleting " + path)
+        return True
+    else:
+        logging.debug("Overwrite denied.")
+        return False
 
 def copy(contents, dest):
     if not os.path.isdir(dest):
         os.makedirs(dest)
 
     for obj in contents:
+        name = os.path.basename(os.path.normpath(obj))
+        destName = os.path.join(dest, name)
+
+        if os.path.exists(destName):
+            if should_overwrite("", destName):
+                if os.path.isdir(destName):
+                    shutil.rmtree(destName)
+                else:
+                    os.remove(destName)
+            else:
+                continue
+
+        assert not os.path.exists(destName)
+
         if os.path.isdir(obj):
-            folderName = os.path.basename(os.path.normpath(obj))
-            shutil.copytree(obj, os.path.join(dest, folderName))
+            shutil.copytree(obj, destName)
         elif os.path.isfile(obj):
             shutil.copy(obj, dest)
         else:
             raise IOError("Source doest not exist!")
 
-def getSavePath(templateName):
+def get_name(path):
+    return os.path.basename(os.path.normpath(path))
+
+def get_save_path(templateName):
     return os.path.join(SAVE_DIR, templateName)
 
-def init():
-    if not os.path.isdir(SAVE_DIR):
-        os.makedirs(SAVE_DIR)
-
+def setup_logging():
     logging.basicConfig(level=logging.DEBUG,
                         format="%(asctime)s %(levelname)-8s %(message)s",
                         datefmt="%m-%d %H:%M",
@@ -48,36 +79,31 @@ def init():
     console.setFormatter(formatter)
 
     logging.getLogger("").addHandler(console)
+
+def init():
+    if not os.path.isdir(SAVE_DIR):
+        os.makedirs(SAVE_DIR)
+
+    setup_logging()
     logging.debug("Using Python version " + sys.version)
 
-
 def handle_new(name, files):
-    save_path = getSavePath(name)
+    save_path = get_save_path(name)
 
     fileList = [os.path.abspath(f) for f in glob.glob(files)]
+
     if len(fileList) is 0:
         logging.error("No files found matching '" + files + "'")
         return
 
     if os.path.isdir(save_path):
         # Boilerplate with that name already exists
-        logging.debug(save_path + " already exists. Asking to overwrite...")
-
-        res = ""
-        while res != "y" and res != "n":
-            res = input("Template '" + name + "' already exists. "
-                        "Do you want to replace its contents? (y/n) ")
-            res = res.lower()
-
-        if res == "n":
-            logging.debug("Overwrite denied. Aborting")
-            return
-        else:
-            logging.debug("Overwrite approved. Deleting " + save_path)
+        if should_overwrite("Template", save_path):
             handle_delete(name)
+        else:
+            return
 
     assert not os.path.isdir(save_path)
-
     logging.debug("Creating new template '" + name + "' from " + files)
 
     try:
@@ -90,7 +116,7 @@ def handle_new(name, files):
 
 
 def handle_use(name):
-    save_path = getSavePath(name)
+    save_path = get_save_path(name)
 
     if os.path.isdir(save_path):
         logging.debug("Using template '" + name + "'")
@@ -101,7 +127,7 @@ def handle_use(name):
         try:
             copy(contentPaths, os.getcwd())
         except IOError as e:
-            logging.error("Apparently your current directory doesn't exist...")
+            logging.error("Your recycle directory doesn't seem to exist...")
     else:
         logging.error("No template with the name '" + name + "'  was found!")
 
@@ -117,7 +143,7 @@ def handle_list():
 
 
 def handle_delete(name):
-    save_path = getSavePath(name)
+    save_path = get_save_path(name)
 
     if os.path.isdir(save_path):
         shutil.rmtree(save_path)
